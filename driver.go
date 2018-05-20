@@ -74,5 +74,5 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	sql.Register("odbc", &drv)
+	sql.Register("godbc", &drv)
 }
