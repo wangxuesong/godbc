@@ -13,6 +13,12 @@ import (
 	"github.com/alexbrainman/odbc/api"
 )
 
+var (
+	nullString [1]uint16
+	nullByte   [1]byte
+	wcharSize  int
+)
+
 type Parameter struct {
 	SQLType     api.SQLSMALLINT
 	Decimal     api.SQLSMALLINT
@@ -134,21 +140,30 @@ func (p *Parameter) BindValue(h api.SQLHSTMT, idx int, v driver.Value) error {
 	case []byte:
 		ctype = api.SQL_C_BINARY
 		b := make([]byte, len(d))
-		copy(b, d)
-		p.Data = b
-		buf = unsafe.Pointer(&b[0])
-		buflen = api.SQLLEN(len(b))
-		plen = p.StoreStrLen_or_IndPtr(buflen)
-		size = api.SQLULEN(len(b))
-		switch {
-		case p.isDescribed:
-			sqltype = p.SQLType
-		case size <= 0:
-			sqltype = api.SQL_LONGVARBINARY
-		case size >= 8000:
-			sqltype = api.SQL_LONGVARBINARY
-		default:
+		if len(d) == 0 {
+			buf = unsafe.Pointer(&nullByte[0])
+			size = 1
 			sqltype = api.SQL_BINARY
+			slen := api.SQLLEN(len(d))
+			plen = &slen
+			buflen = api.SQLLEN(len(d))
+		} else {
+			copy(b, d)
+			p.Data = b
+			buf = unsafe.Pointer(&b[0])
+			buflen = api.SQLLEN(len(b))
+			plen = p.StoreStrLen_or_IndPtr(buflen)
+			size = api.SQLULEN(len(b))
+			switch {
+			case p.isDescribed:
+				sqltype = p.SQLType
+			case size <= 0:
+				sqltype = api.SQL_LONGVARBINARY
+			case size >= 8000:
+				sqltype = api.SQL_LONGVARBINARY
+			default:
+				sqltype = api.SQL_BINARY
+			}
 		}
 	default:
 		return fmt.Errorf("unsupported type %T", v)
