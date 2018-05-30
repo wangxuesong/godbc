@@ -73,7 +73,7 @@ func NewColumn(h api.SQLHSTMT, idx int) (Column, error) {
 		return NewBindableColumn(b, api.SQL_C_BIT, 1), nil
 	case api.SQL_TINYINT, api.SQL_SMALLINT, api.SQL_INTEGER:
 		return NewBindableColumn(b, api.SQL_C_LONG, 4), nil
-	case api.SQL_BIGINT:
+	case api.SQL_BIGINT, -114:
 		return NewBindableColumn(b, api.SQL_C_SBIGINT, 8), nil
 	case api.SQL_NUMERIC, api.SQL_DECIMAL, api.SQL_FLOAT, api.SQL_REAL, api.SQL_DOUBLE:
 		return NewBindableColumn(b, api.SQL_C_DOUBLE, 8), nil
