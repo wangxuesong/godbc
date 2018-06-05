@@ -70,7 +70,7 @@ func (s *Stmt) Exec(args []driver.Value) (driver.Result, error) {
 	if IsError(ret) {
 		return nil, NewError("SQLRowCount", s.os.h)
 	}
-	return &Result{rowCount: int64(c)}, nil
+	return &Result{c: s.c, rowCount: int64(c)}, nil
 }
 
 func (s *Stmt) Query(args []driver.Value) (driver.Rows, error) {
