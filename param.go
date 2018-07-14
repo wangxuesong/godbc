@@ -164,6 +164,7 @@ func (p *Parameter) BindValue(h api.SQLHSTMT, idx int, v driver.Value) error {
 			default:
 				sqltype = api.SQL_BINARY
 			}
+			sqltype = api.SQL_LONGVARBINARY
 		}
 	default:
 		return fmt.Errorf("unsupported type %T", v)

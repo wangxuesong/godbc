@@ -34,6 +34,8 @@ func (d *Driver) Open(dsn string) (driver.Conn, error) {
 		defer releaseHandle(h)
 		return nil, NewError("SQLDriverConnect", h)
 	}
+	i := api.SQL_TRUE
+	api.SQLSetConnectAttr(h, 2262 /* SQL_INFX_ATTR_LO_AUTOMATIC */, api.SQLPOINTER(&i), 0)
 	return &Conn{h: h}, nil
 }
 
